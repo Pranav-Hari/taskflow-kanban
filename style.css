@@ -1,313 +1,493 @@
-@import url("https://fonts.googleapis.com/css2?family=Neucha&display=swap");
+/* =====================================================
+   TASKFLOW - Modern Kanban Task Management
+   ===================================================== */
+
+* {
+    box-sizing: border-box;
+}
 
 html {
-	box-sizing: border-box;
+    min-height: 100%;
 }
 
 :root {
-	--to-do: #a2622d;
-	--doing: #1b6161;
-	--done: #248224;
-	--on-hold: #a22d22;
+    --background: #f4f7fb;
+    --surface: #ffffff;
+    --surface-soft: #f8fafc;
+    --text: #172033;
+    --muted: #64748b;
+    --border: #e2e8f0;
+
+    --to-do: #6366f1;
+    --doing: #0ea5e9;
+    --done: #10b981;
+    --on-hold: #f59e0b;
+
+    --shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
 }
 
 body {
-	margin: 0;
-	background: url("./image.jpg");
-	background-size: cover;
-	background-position: 50% 60%;
-	background-attachment: fixed;
-	color: white;
-	font-family: "Neucha", cursive;
-	font-size: 20px;
-	overflow-y: hidden;
+    margin: 0;
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
+/* =====================================================
+   Main Heading
+   ===================================================== */
+
 h1 {
-	letter-spacing: 2px;
-	text-shadow: 2px 2px 5px black;
+    margin: 0;
+    letter-spacing: 0;
+    text-shadow: none;
 }
 
 .main-title {
-	text-align: center;
-	font-size: 3rem;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #172033;
+    margin: 28px 0 6px;
 }
+
+.main-title::after {
+    content: "Smart Task Management & Workflow Board";
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+/* =====================================================
+   Lists
+   ===================================================== */
 
 ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
+/* =====================================================
+   Main Container
+   ===================================================== */
+
 .drag-container {
-	margin: 20px;
+    margin: 30px;
+    max-width: 1800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
 }
 
 .drag-list {
-	display: flex;
-	align-items: flex-start;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
 }
 
-/* Columns */
+/* =====================================================
+   Kanban Columns
+   ===================================================== */
+
 .drag-column {
-	flex: 1;
-	margin: 0 10px;
-	position: relative;
-	background-color: rgba(0, 0, 0, 0.4);
-	border-radius: 10px;
-	overflow-x: hidden;
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    min-height: 300px;
 }
 
+/* =====================================================
+   Column Headers
+   ===================================================== */
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0;
+    margin: 0;
+    min-height: 58px;
+}
+
+.header h1 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: none;
+    letter-spacing: 0.5px;
+}
+
+/* Backlog */
 .to-do-column .header,
 .to-do-column .solid,
 .to-do-column .solid:hover,
 .to-do-column .over {
-	background-color: var(--to-do);
+    background-color: var(--to-do);
 }
 
+/* In Progress */
 .doing-column .header,
 .doing-column .solid,
 .doing-column .solid:hover,
 .doing-column .over {
-	background-color: var(--doing);
+    background-color: var(--doing);
 }
 
+/* Completed */
 .done-column .header,
 .done-column .solid,
 .done-column .solid:hover,
 .done-column .over {
-	background-color: var(--done);
+    background-color: var(--done);
 }
 
+/* On Hold */
 .on-hold-column .header,
 .on-hold-column .solid,
 .on-hold-column .solid:hover,
 .on-hold-column .over {
-	background-color: var(--on-hold);
+    background-color: var(--on-hold);
 }
 
-/* Custom Scrollbar */
-
-/* To Be Done */
-.custom-scroll-todo {
-	overflow-y: auto;
-	max-height: 75vh;
-}
-
-.custom-scroll-todo::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4);
-	border-radius: 10px;
-	background-color: rgba(255, 255, 255, 0.3);
-	margin-right: 5px;
-}
-
-.custom-scroll-todo::-webkit-scrollbar {
-	width: 10px;
-}
-
-.custom-scroll-todo::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-	background-color: var(--to-do);
-}
-
-/* Doing */
-.custom-scroll-doing {
-	overflow-y: auto;
-	max-height: 75vh;
-}
-
-.custom-scroll-doing::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4);
-	border-radius: 10px;
-	background-color: rgba(255, 255, 255, 0.3);
-	margin-right: 5px;
-}
-
-.custom-scroll-doing::-webkit-scrollbar {
-	width: 10px;
-}
-
-.custom-scroll-doing::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-	background-color: var(--doing);
-}
-
-/* Done */
-.custom-scroll-done {
-	overflow-y: auto;
-	max-height: 75vh;
-}
-
-.custom-scroll-done::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4);
-	border-radius: 10px;
-	background-color: rgba(255, 255, 255, 0.3);
-	margin-right: 5px;
-}
-
-.custom-scroll-done::-webkit-scrollbar {
-	width: 10px;
-}
-
-.custom-scroll-done::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-	background-color: var(--done);
-}
-
-/* On Hold */
-.custom-scroll {
-	overflow-y: auto;
-	max-height: 75vh;
-}
-
-.custom-scroll::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.4);
-	border-radius: 10px;
-	background-color: rgba(255, 255, 255, 0.3);
-	margin-right: 5px;
-}
-
-.custom-scroll::-webkit-scrollbar {
-	width: 10px;
-}
-
-.custom-scroll::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-	background-color: var(--on-hold);
-}
-
-.header {
-	display: flex;
-	justify-content: center;
-	border-radius: 10px;
-	margin: 10px;
-}
-
-.header h1 {
-	font-size: 1.25rem;
-}
-
-/* Drag and Drop */
-.over {
-	padding: 50px 10px;
-}
+/* =====================================================
+   Drag and Drop Area
+   ===================================================== */
 
 .drag-item-list {
-	min-height: 50px;
+    min-height: 120px;
+    padding: 8px;
 }
 
+.over {
+    padding: 30px 10px;
+    background-color: rgba(99, 102, 241, 0.08);
+}
+
+/* =====================================================
+   Task Cards
+   ===================================================== */
+
 .drag-item {
-	margin: 10px;
-	padding: 10px;
-	height: fit-content;
-	background-color: rgba(0, 0, 0, 0.8);
-	border-radius: 10px;
-	line-height: 1.5rem;
-	letter-spacing: 1px;
-	cursor: pointer;
+    margin: 10px 4px;
+    padding: 14px;
+    min-height: 55px;
+    height: fit-content;
+
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    line-height: 1.5rem;
+    letter-spacing: 0;
+    color: var(--text);
+
+    cursor: grab;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.drag-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
+}
+
+.drag-item:active {
+    cursor: grabbing;
 }
 
 .drag-item:focus {
-	outline: none;
-	background-color: white;
-	color: black;
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+    background-color: white;
+    color: var(--text);
 }
 
-/* Add Button Group */
+/* Delete Task Button */
+.delete-btn {
+    float: right;
+    margin-left: 10px;
+    padding: 5px 8px;
+
+    border: none;
+    border-radius: 6px;
+
+    background: transparent;
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.delete-btn:active {
+    transform: scale(0.95);
+}
+
+.task-text {
+    display: inline-block;
+    max-width: calc(100% - 70px);
+    outline: none;
+}
+
+/* =====================================================
+   Add Task Buttons
+   ===================================================== */
+
 .add-btn-group {
-	display: flex;
-	justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    background: #ffffff;
 }
 
 .add-btn {
-	margin: 10px;
-	padding: 5px 10px;
-	display: flex;
-	align-items: center;
-	cursor: pointer;
-	width: fit-content;
-	border-radius: 5px;
-	transition: all 0.3s ease-in;
-	user-select: none;
+    margin: 10px;
+    padding: 8px 12px;
+
+    display: flex;
+    align-items: center;
+
+    cursor: pointer;
+    width: fit-content;
+
+    border-radius: 8px;
+    color: var(--muted);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: all 0.2s ease;
+    user-select: none;
 }
 
 .add-btn:hover {
-	background-color: rgba(255, 255, 255, 0.9);
-	color: black;
+    background-color: #eef2ff;
+    color: #4f46e5;
 }
 
 .add-btn:active {
-	transform: scale(0.97);
+    transform: scale(0.97);
 }
 
 .solid {
-	display: none;
+    display: none;
+    color: #111827 !important;
+}
+
+.solid span {
+    color: #111827 !important;
 }
 
 .solid:hover {
-	transition: unset;
-	filter: brightness(95%);
-	color: white;
+    transition: unset;
+    filter: brightness(95%);
+    color: #111827 !important;
+}
+
+.solid:hover span {
+    color: #111827 !important;
 }
 
 .plus-sign {
-	font-size: 1.5rem;
-	margin-right: 5px;
-	position: relative;
-	top: -3px;
+    font-size: 1.4rem;
+    margin-right: 6px;
+    position: relative;
+    top: -1px;
 }
 
+/* =====================================================
+   New Task Input
+   ===================================================== */
+
 .add-container {
-	margin: 10px;
-	padding: 5px 10px;
-	border-radius: 10px;
-	background-color: rgba(255, 255, 255, 0.9);
-	min-height: 100px;
-	display: none;
+    margin: 10px;
+    padding: 5px;
+
+    border-radius: 10px;
+    background-color: #f8fafc;
+
+    min-height: 100px;
+    display: none;
+
+    border: 1px solid var(--border);
 }
 
 .add-item {
-	width: 100%;
-	min-height: 100px;
-	height: auto;
-	background-color: white;
-	border-radius: 10px;
-	margin: 5px auto;
-	resize: none;
-	color: black;
-	padding: 10px;
+    width: 100%;
+    min-height: 90px;
+
+    background-color: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    margin: 0 auto;
+
+    resize: none;
+    color: var(--text);
+
+    padding: 12px;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
 }
 
 .add-item:focus {
-	outline: none;
+    outline: 2px solid #6366f1;
+    outline-offset: 1px;
 }
 
-/* Media Query: Laptop */
-@media screen and (max-width: 1800px) {
-	.main-title {
-		font-size: 2rem;
-	}
+/* =====================================================
+   Scrollbars
+   ===================================================== */
+
+.custom-scroll-todo,
+.custom-scroll-doing,
+.custom-scroll-done,
+.custom-scroll {
+    overflow-y: auto;
+    max-height: 65vh;
 }
 
-/* Media Query: Large Smartphone (Vertical) */
+.custom-scroll-todo::-webkit-scrollbar,
+.custom-scroll-doing::-webkit-scrollbar,
+.custom-scroll-done::-webkit-scrollbar,
+.custom-scroll::-webkit-scrollbar {
+    width: 7px;
+}
+
+.custom-scroll-todo::-webkit-scrollbar-track,
+.custom-scroll-doing::-webkit-scrollbar-track,
+.custom-scroll-done::-webkit-scrollbar-track,
+.custom-scroll::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.custom-scroll-todo::-webkit-scrollbar-thumb {
+    background: var(--to-do);
+    border-radius: 10px;
+}
+
+.custom-scroll-doing::-webkit-scrollbar-thumb {
+    background: var(--doing);
+    border-radius: 10px;
+}
+
+.custom-scroll-done::-webkit-scrollbar-thumb {
+    background: var(--done);
+    border-radius: 10px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: var(--on-hold);
+    border-radius: 10px;
+}
+
+/* =====================================================
+   Responsive - Laptop
+   ===================================================== */
+
+@media screen and (max-width: 1200px) {
+    .drag-list {
+        gap: 12px;
+    }
+
+    .drag-container {
+        padding: 0 12px;
+    }
+
+    .main-title {
+        font-size: 2.2rem;
+    }
+}
+
+/* =====================================================
+   Responsive - Tablet
+   ===================================================== */
+
+@media screen and (max-width: 900px) {
+    .drag-list {
+        flex-wrap: wrap;
+    }
+
+    .drag-column {
+        flex: 1 1 calc(50% - 10px);
+    }
+
+    .custom-scroll-todo,
+    .custom-scroll-doing,
+    .custom-scroll-done,
+    .custom-scroll {
+        max-height: 50vh;
+    }
+}
+
+/* =====================================================
+   Responsive - Smartphone
+   ===================================================== */
+
 @media screen and (max-width: 600px) {
-	body {
-		overflow-y: auto;
-	}
+    body {
+        overflow-y: auto;
+    }
 
-	.drag-container {
-		margin: 0;
-	}
+    .main-title {
+        font-size: 2rem;
+        margin-top: 20px;
+    }
 
-	.drag-list {
-		display: block;
-	}
+    .main-title::after {
+        font-size: 0.8rem;
+        padding: 0 15px;
+    }
 
-	.drag-column {
-		margin: 10px;
-	}
+    .drag-container {
+        margin: 15px 0;
+        padding: 0 10px;
+    }
+
+    .drag-list {
+        display: block;
+    }
+
+    .drag-column {
+        margin: 14px 0;
+        width: 100%;
+    }
+
+    .custom-scroll-todo,
+    .custom-scroll-doing,
+    .custom-scroll-done,
+    .custom-scroll {
+        max-height: 45vh;
+    }
+
+    .header {
+        min-height: 52px;
+    }
+
+    .drag-item {
+        padding: 12px;
+    }
 }

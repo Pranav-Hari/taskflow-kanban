@@ -85,22 +85,42 @@ function filterArray(array) {
 
 // Create DOM Elements for each list item
 function createItemEl(columnEl, column, item, index) {
-	// console.log("columnEl:", columnEl);
-	// console.log("column:", column);
-	// console.log("item:", item);
-	// console.log("index:", index);
-	// List Item
-	const listEl = document.createElement("li");
-	listEl.textContent = item;
-	listEl.id = index;
-	listEl.classList.add("drag-item");
-	listEl.draggable = true;
-	listEl.setAttribute("onfocusout", `updateItem(${index}, ${column})`);
-	listEl.setAttribute("ondragstart", "drag(event)");
-	listEl.contentEditable = true;
-	// Append
-	columnEl.appendChild(listEl);
+    // Task card
+    const listEl = document.createElement("li");
+    listEl.id = index;
+    listEl.classList.add("drag-item");
+    listEl.draggable = true;
+    listEl.setAttribute("ondragstart", "drag(event)");
+
+    // Task text
+    const textEl = document.createElement("span");
+    textEl.classList.add("task-text");
+    textEl.textContent = item;
+    textEl.contentEditable = true;
+    textEl.setAttribute("onfocusout", `updateItem(${index}, ${column})`);
+
+    // Delete button
+    const deleteBtn = document.createElement("button");
+    deleteBtn.classList.add("delete-btn");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.type = "button";
+    deleteBtn.setAttribute("contenteditable", "false");
+    deleteBtn.setAttribute("draggable", "false");
+
+    deleteBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        deleteItem(column, index);
+    });
+
+    // Add elements to card
+    listEl.appendChild(textEl);
+    listEl.appendChild(deleteBtn);
+
+    // Add card to column
+    columnEl.appendChild(listEl);
 }
+
+
 
 // Update Columns in DOM - Reset HTML, Filter Array, Update localStorage
 function updateDOM() {
@@ -137,27 +157,51 @@ function updateDOM() {
 	updateSavedColumns();
 }
 
-// Update Item - Delete if necessary, or update Array value
+// Update Task - Delete if empty, otherwise update task text
 function updateItem(id, column) {
-	const selectedArray = listArrays[column];
-	const selectedColumn = listColumns[column].children;
-	if (!dragging) {
-		if (!selectedColumn[id].textContent) {
-			delete selectedArray[id];
-		} else {
-			selectedArray[id] = selectedColumn[id].textContent;
-		}
-		updateDOM();
-	}
+    const selectedArray = listArrays[column];
+    const selectedColumn = listColumns[column].children;
+
+    if (!dragging) {
+        const taskText = selectedColumn[id].querySelector(".task-text");
+
+        if (!taskText.textContent.trim()) {
+            selectedArray.splice(id, 1);
+        } else {
+            selectedArray[id] = taskText.textContent.trim();
+        }
+
+        updateDOM();
+    }
+}
+
+// Delete Task
+function deleteItem(column, index) {
+    const selectedArray = listArrays[column];
+
+    if (confirm("Are you sure you want to delete this task?")) {
+        selectedArray.splice(index, 1);
+        updateDOM();
+    }
 }
 
 // Add to Column List, Reset Textbox
 function addToColumn(column) {
-	const itemText = addItems[column].textContent;
-	const selectedArray = listArrays[column];
-	selectedArray.push(itemText);
-	addItems[column].textContent = "";
-	updateDOM(column);
+    const itemText = addItems[column].textContent.trim();
+    const selectedArray = listArrays[column];
+
+    // Prevent empty tasks
+    if (!itemText) {
+        alert("Please enter a task before saving.");
+        addItems[column].focus();
+        return false;
+    }
+
+    selectedArray.push(itemText);
+    addItems[column].textContent = "";
+    updateDOM(column);
+
+    return true;
 }
 
 // Show Add Item Input Box
@@ -169,31 +213,48 @@ function showInputBox(column) {
 
 // Hide Item Input Box
 function hideInputBox(column) {
-	addBtns[column].style.visibility = "visible";
-	saveItemBtns[column].style.display = "none";
-	addItemContainers[column].style.display = "none";
-	addToColumn(column);
+    const saved = addToColumn(column);
+
+    if (!saved) {
+        return;
+    }
+
+    addBtns[column].style.visibility = "visible";
+    saveItemBtns[column].style.display = "none";
+    addItemContainers[column].style.display = "none";
 }
 
-// Allows arrays to reflect Drag and Drop items
+// Rebuild arrays after Drag and Drop
 function rebuildArrays() {
-	backlogListArray = [];
-	for (let i = 0; i < backlogListEl.children.length; i++) {
-		backlogListArray.push(backlogListEl.children[i].textContent);
-	}
-	progressListArray = [];
-	for (let i = 0; i < progressListEl.children.length; i++) {
-		progressListArray.push(progressListEl.children[i].textContent);
-	}
-	completeListArray = [];
-	for (let i = 0; i < completeListEl.children.length; i++) {
-		completeListArray.push(completeListEl.children[i].textContent);
-	}
-	onHoldListArray = [];
-	for (let i = 0; i < onHoldListEl.children.length; i++) {
-		onHoldListArray.push(onHoldListEl.children[i].textContent);
-	}
-	updateDOM();
+    backlogListArray = [];
+    for (let i = 0; i < backlogListEl.children.length; i++) {
+        backlogListArray.push(
+            backlogListEl.children[i].querySelector(".task-text").textContent
+        );
+    }
+
+    progressListArray = [];
+    for (let i = 0; i < progressListEl.children.length; i++) {
+        progressListArray.push(
+            progressListEl.children[i].querySelector(".task-text").textContent
+        );
+    }
+
+    completeListArray = [];
+    for (let i = 0; i < completeListEl.children.length; i++) {
+        completeListArray.push(
+            completeListEl.children[i].querySelector(".task-text").textContent
+        );
+    }
+
+    onHoldListArray = [];
+    for (let i = 0; i < onHoldListEl.children.length; i++) {
+        onHoldListArray.push(
+            onHoldListEl.children[i].querySelector(".task-text").textContent
+        );
+    }
+
+    updateDOM();
 }
 
 // When Item Enters Column Area
